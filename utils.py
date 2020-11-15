@@ -755,18 +755,18 @@ def select_pictures(path_video, path_frames)
             print(img_path[i + 1])
             break
         else:
-            cv2.imwrite('file_2', img_1)
+            cv2.imwrite('file_2\\%s.jpg' % img_path[i], img_1)
 
 
-    img_path = get_imlist('file_2')
-    for i in range(0,len(img_path)-2):
-        text1 = pytesseract.image_to_string(cut_img(img_path[i]), lang="eng")
-        text2 = pytesseract.image_to_string(cut_img(img_path[i+1]), lang="eng")
+    img_path_1 = get_imlist('file_2')
+    for i in range(0,len(img_path_1)-2):
+        text1 = pytesseract.image_to_string(cut_img(img_path_1[i]), lang="eng")
+        text2 = pytesseract.image_to_string(cut_img(img_path_1[i+1]), lang="eng")
         if text1 != text2 and text1 != None and text2 != None:
-            #print(img_path[i])
+            #print(img_path_1[i])
             text1 = text1[:4] + '_' + text1[5:]
             text1 = text1[:7]
             text1 = text1+'.jpg'
             print(text1)
-            img = Image.open(img_path[i])
-            img.save(os.path.join(path_frames,text1))
+            img = Image.open(img_path_1[i])
+            img.save(os.path.join(path_new,text1))
