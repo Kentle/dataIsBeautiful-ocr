@@ -26,6 +26,7 @@ if __name__ == '__main__':
         os.makedirs(args.output_dir)
 
     # 读取视频截取图片
+    select_pictures(args.video, args.output_dir)
     # 结果存到 args.output_dir + "/pictures/"
     #####################
 
