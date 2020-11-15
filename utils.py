@@ -12,6 +12,8 @@ from zipfile import ZipFile
 from imgproc import loadImage
 import xlwt
 import copy
+import os
+import pytesseract
 
 if sys.version_info[0] == 2:
     from six.moves.urllib.request import urlretrieve
@@ -706,3 +708,62 @@ def wt_xls(AllData,output):
             worksheet.write(j, i + 1, ans[i][tag[j]])
 
     workbook.save(output)  # 保存文件
+
+#截取时间信息所在的区域
+def cut_img(path):
+    img=Image.open(path)
+    #四个参数依次为左上角的横纵坐标以及右下角的横纵坐标
+    img=img.crop((800,550,1250,700))
+    return img
+
+#获取当前路径下所有以jpg为后缀的文件路径
+def get_imlist(path):
+    return [os.path.join(path,f) for f in os.listdir(path) if f.endswith('.jpg')]
+
+#将矩阵除了边缘部分外均设置为零
+def set_zero(s):
+    for i in range(1,len(s)-1):
+        for j in range(1,len(s[i])-1):
+            s[i][j] = [0,0,0]
+    return s
+
+def select_pictures(path_video, path_frames)
+    vidcap = cv2.VideoCapture(path_video)  # 打开视频
+    success, img = vidcap.read()  # 按帧读取视频
+    # success为布尔值，表示是否读取帧正确,读到结尾返回false
+    count = 1
+    success = True
+    while success:
+        success, image = vidcap.read()
+        cv2.imwrite("file_1\%s.jpg" % str(count).zfill(4), image)
+        # 若没有按下esc键，则每1ms切换下一帧,其中27为esc键的ASCII码，判断是否按下esc键
+        if cv2.waitKey(1) == 27:
+            break
+        #print("save %d frames" % count)
+        count += 1
+
+    img_path = get_imlist('file_1')
+    for i in range(0, len(img_path) - 2):
+        img_1 = cv2.imread(img_path[i])
+        img_2 = cv2.imread(img_path[i + 1])
+        img_1_squ = set_zero(img_1)
+        img_1_squ = np.array(img_1_squ)
+        img_2_squ = set_zero(img_2)
+        img_2_squ = np.array(img_2_squ)
+        #print((img_1_squ != img_2_squ).all())
+        if (img_1_squ == img_2_squ).all():
+            cv2.imwrite('file_2', img_1)
+
+
+    img_path = get_imlist('file_2')
+    for i in range(0,len(img_path)-2):
+        text1 = pytesseract.image_to_string(cut_img(img_path[i]), lang="eng")
+        text2 = pytesseract.image_to_string(cut_img(img_path[i+1]), lang="eng")
+        if text1 != text2 and text1 != None and text2 != None:
+            #print(img_path[i])
+            text1 = text1[:4] + '_' + text1[5:]
+            text1 = text1[:7]
+            text1 = text1+'.jpg'
+            print(text1)
+            img = Image.open(img_path[i])
+            img.save(os.path.join(path_frames,text1))
