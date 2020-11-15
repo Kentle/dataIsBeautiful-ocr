@@ -13,7 +13,6 @@ clips1 = []
 clips2 = []
 ending = []
 ary_pie = []
-ary_plt = []
 
 pie_number = len(glob.glob(pathname='.\\result\\pic\\*.jpg'))
 
@@ -67,7 +66,7 @@ def subtitle():
 
 
 if __name__ == '__main__':
-    # pic2slides()
+    pic2slides()
     # quit()
     background()
     # quit()
