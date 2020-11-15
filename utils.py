@@ -750,8 +750,11 @@ def select_pictures(path_video, path_frames)
         img_1_squ = np.array(img_1_squ)
         img_2_squ = set_zero(img_2)
         img_2_squ = np.array(img_2_squ)
-        #print((img_1_squ != img_2_squ).all())
-        if (img_1_squ == img_2_squ).all():
+        #print((img_1_squ != img_2_squ).any())
+        if (img_1_squ != img_2_squ).any():
+            print(img_path[i + 1])
+            break
+        else:
             cv2.imwrite('file_2', img_1)
 
 
