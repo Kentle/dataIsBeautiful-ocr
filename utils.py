@@ -708,6 +708,21 @@ def wt_xls(AllData,output):
             worksheet.write(j, i + 1, ans[i][tag[j]])
 
     workbook.save(output)  # 保存文件
+    
+#计算对矩阵1的相似度。相减之后对元素取平方再求和。因为如果越相似那么为0的会越多。
+#如果矩阵大小不一样会在左上角对齐，截取二者最小的相交范围。
+#用于判断两矩阵的相似度
+def mtx_similar(arr1:np.ndarray, arr2:np.ndarray):
+    if arr1.shape != arr2.shape:
+        minx = min(arr1.shape[0], arr2.shape[0])
+        miny = min(arr1.shape[1], arr2.shape[1])
+        differ = arr1[:minx, :miny] - arr2[:minx, :miny]
+    else:
+        differ = arr1 - arr2
+    numera = np.sum(differ ** 2)
+    denom = np.sum(arr1 ** 2)
+    similar = 1 - (numera / denom)
+    return similar
 
 #截取时间信息所在的区域
 def cut_img(path):
@@ -751,8 +766,8 @@ def select_pictures(path_video, path_frames)
         img_2_squ = set_zero(img_2)
         img_2_squ = np.array(img_2_squ)
         #print((img_1_squ != img_2_squ).any())
-        if (img_1_squ != img_2_squ).any():
-            print(img_path[i + 1])
+        print(mtx_similar(img_1_squ,img_2_squ))
+        if mtx_similar(img_1_squ,img_2_squ) <= 0.95:
             break
         else:
             cv2.imwrite('file_2\\%s.jpg' % img_path[i], img_1)
