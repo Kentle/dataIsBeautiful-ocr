@@ -9,7 +9,7 @@ python main.py
 - `-video`: data is beautiful视频存放路径，默认为`./videos/browsers.mp4`
 - `-output_dir`: 结果输出路径，默认为`./result`
 - `-save_tmp` :是否文字检测的中间过程，默认为`1`
-- `-title，bgm，whu:背景图片和背景音乐
+- title，bgm，whu:背景图片和背景音乐
 
 ## Requirements
 - opencv_python==4.4.0.46
