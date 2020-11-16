@@ -758,6 +758,8 @@ def select_pictures(path_video, path_frames)
         count += 1
 
     img_path = get_imlist('file_1')
+    count = 0
+    flag = 0
     for i in range(0, len(img_path) - 2):
         img_1 = cv2.imread(img_path[i])
         img_2 = cv2.imread(img_path[i + 1])
@@ -765,13 +767,18 @@ def select_pictures(path_video, path_frames)
         img_1_squ = np.array(img_1_squ)
         img_2_squ = set_zero(img_2)
         img_2_squ = np.array(img_2_squ)
-        #print((img_1_squ != img_2_squ).any())
         print(mtx_similar(img_1_squ,img_2_squ))
-        if mtx_similar(img_1_squ,img_2_squ) <= 0.95:
+        if mtx_similar(img_1_squ,img_2_squ) <= 0.99 and flag < 6:
+            print(img_path[i+1])
+            flag += 1
+        elif mtx_similar(img_1_squ,img_2_squ) <= 0.99 and flag >= 6:
             break
         else:
-            cv2.imwrite('file_2\\%s.jpg' % img_path[i], img_1)
-
+            flag = 0
+        count += 1
+    for i in range(0, count - 6):
+        img = Image.open(img_path[i])
+        img.save(os.path.join('file_2', img_path[i]))
 
     img_path_1 = get_imlist('file_2')
     for i in range(0,len(img_path_1)-2):
