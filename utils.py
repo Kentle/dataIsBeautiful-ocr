@@ -742,7 +742,8 @@ def set_zero(s):
             s[i][j] = [0,0,0]
     return s
 
-def select_pictures(path_video, path_frames)
+def select_pictures(path_video, path_frames):
+    #逐帧读取视频
     vidcap = cv2.VideoCapture(path_video)  # 打开视频
     success, img = vidcap.read()  # 按帧读取视频
     # success为布尔值，表示是否读取帧正确,读到结尾返回false
@@ -756,18 +757,23 @@ def select_pictures(path_video, path_frames)
             break
         #print("save %d frames" % count)
         count += 1
-
+    
+    #对所有的帧进行第一步筛选，即去掉视频末尾的转场部分
     img_path = get_imlist('file_1')
     count = 0
     flag = 0
     for i in range(0, len(img_path) - 2):
+        #分别读取相邻的两帧
         img_1 = cv2.imread(img_path[i])
         img_2 = cv2.imread(img_path[i + 1])
+        #将中间部分像素值设置为[0,0,0]，仅考虑边缘部分是否变化
         img_1_squ = set_zero(img_1)
         img_1_squ = np.array(img_1_squ)
         img_2_squ = set_zero(img_2)
         img_2_squ = np.array(img_2_squ)
         print(mtx_similar(img_1_squ,img_2_squ))
+        #由于视频中左下角出现了猫头鹰图案，影响对边界变化的检测，设置flag值来判断边界变化的时间，持续六个帧以上即为末尾的转场
+        #count用于记录可以采用的帧数目
         if mtx_similar(img_1_squ,img_2_squ) <= 0.99 and flag < 6:
             print(img_path[i+1])
             flag += 1
@@ -780,6 +786,7 @@ def select_pictures(path_video, path_frames)
         img = Image.open(img_path[i])
         img.save(os.path.join('file_2', img_path[i]))
 
+    #根据每一帧的时间信息进行第二步筛选，选出作为数据集的帧
     img_path_1 = get_imlist('file_2')
     for i in range(0,len(img_path_1)-2):
         text1 = pytesseract.image_to_string(cut_img(img_path_1[i]), lang="eng")
@@ -791,4 +798,4 @@ def select_pictures(path_video, path_frames)
             text1 = text1+'.jpg'
             print(text1)
             img = Image.open(img_path_1[i])
-            img.save(os.path.join(path_new,text1))
+            img.save(os.path.join(path_frames,text1))
