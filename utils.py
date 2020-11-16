@@ -755,7 +755,9 @@ def select_pictures(path_video, path_frames):
         # 若没有按下esc键，则每1ms切换下一帧,其中27为esc键的ASCII码，判断是否按下esc键
         if cv2.waitKey(1) == 27:
             break
-        #print("save %d frames" % count)
+        elif count >= 4916:
+            break
+        print("save %d frames" % count)
         count += 1
     
     #对所有的帧进行第一步筛选，即去掉视频末尾的转场部分
