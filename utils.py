@@ -764,7 +764,9 @@ def select_pictures(path_video, path_frames):
         # 若没有按下esc键，则每1ms切换下一帧,其中27为esc键的ASCII码，判断是否按下esc键
         if cv2.waitKey(1) == 27:
             break
-        #print("save %d frames" % count)
+        elif count >= 4916:
+            break
+        print("save %d frames" % count)
         count += 1
 
     #对所有的帧进行第一步筛选，即去掉视频末尾的转场部分
@@ -796,7 +798,12 @@ def select_pictures(path_video, path_frames):
         os.makedirs(file_2_path)
     for i in range(0, count - 6):
         img = Image.open(img_path[i])
+<<<<<<< HEAD
         img.save(os.path.join(file_2_path, img_path[i].split('/')[-1]))
+=======
+        img.save(os.path.join('file_2', img_path[i][(len(img_path[i])-8):]))
+        print('save %d' % i)
+>>>>>>> ecf99cfe3f2efb2affa403c7394f91f2d3c8ba9d
 
     #根据每一帧的时间信息进行第二步筛选，选出作为数据集的帧
     img_path_1 = get_imlist(file_2_path)
