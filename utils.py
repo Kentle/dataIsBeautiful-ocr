@@ -14,6 +14,8 @@ import xlwt
 import copy
 import os
 import pytesseract
+pytesseract.pytesseract.tesseract_cmd = 'D:/TesseractOCR/Tesseract-OCR/tesseract.exe'
+tessdata_dir_config = '--tessdata-dir "D:/TesseractOCR/Tesseract-OCR/tessdata"'
 
 if sys.version_info[0] == 2:
     from six.moves.urllib.request import urlretrieve
@@ -749,17 +751,24 @@ def select_pictures(path_video, path_frames):
     # success为布尔值，表示是否读取帧正确,读到结尾返回false
     count = 1
     success = True
+    file_1_path = path_frames + '/frame_file_1/'
+    if not os.path.exists(file_1_path):
+        os.makedirs(file_1_path)
     while success:
         success, image = vidcap.read()
-        cv2.imwrite("file_1\%s.jpg" % str(count).zfill(4), image)
+        print(count)
+        if success:
+            cv2.imwrite(file_1_path+ "%s.jpg" % str(count).zfill(4), image)
+        else:
+            break
         # 若没有按下esc键，则每1ms切换下一帧,其中27为esc键的ASCII码，判断是否按下esc键
         if cv2.waitKey(1) == 27:
             break
         #print("save %d frames" % count)
         count += 1
-    
+
     #对所有的帧进行第一步筛选，即去掉视频末尾的转场部分
-    img_path = get_imlist('file_1')
+    img_path = get_imlist(file_1_path)
     count = 0
     flag = 0
     for i in range(0, len(img_path) - 2):
@@ -771,7 +780,7 @@ def select_pictures(path_video, path_frames):
         img_1_squ = np.array(img_1_squ)
         img_2_squ = set_zero(img_2)
         img_2_squ = np.array(img_2_squ)
-        print(mtx_similar(img_1_squ,img_2_squ))
+        print("Count ", str(count), " : ",mtx_similar(img_1_squ,img_2_squ))
         #由于视频中左下角出现了猫头鹰图案，影响对边界变化的检测，设置flag值来判断边界变化的时间，持续六个帧以上即为末尾的转场
         #count用于记录可以采用的帧数目
         if mtx_similar(img_1_squ,img_2_squ) <= 0.99 and flag < 6:
@@ -782,12 +791,18 @@ def select_pictures(path_video, path_frames):
         else:
             flag = 0
         count += 1
+    file_2_path = path_frames + '/frame_file_2/'
+    if not os.path.exists(file_2_path):
+        os.makedirs(file_2_path)
     for i in range(0, count - 6):
         img = Image.open(img_path[i])
-        img.save(os.path.join('file_2', img_path[i]))
+        img.save(os.path.join(file_2_path, img_path[i].split('/')[-1]))
 
     #根据每一帧的时间信息进行第二步筛选，选出作为数据集的帧
-    img_path_1 = get_imlist('file_2')
+    img_path_1 = get_imlist(file_2_path)
+    pic_output_path = path_frames + '/pictures/'
+    if not os.path.exists(pic_output_path):
+        os.makedirs(pic_output_path)
     for i in range(0,len(img_path_1)-2):
         text1 = pytesseract.image_to_string(cut_img(img_path_1[i]), lang="eng")
         text2 = pytesseract.image_to_string(cut_img(img_path_1[i+1]), lang="eng")
@@ -798,4 +813,4 @@ def select_pictures(path_video, path_frames):
             text1 = text1+'.jpg'
             print(text1)
             img = Image.open(img_path_1[i])
-            img.save(os.path.join(path_frames,text1))
+            img.save(os.path.join(pic_output_path,text1))

@@ -10,7 +10,7 @@ import re
 import xlwt
 import copy
 from matplotlib import pyplot as plt
-from utils import wt_xls
+from utils import wt_xls,select_pictures
 import img_preprocess as ip
 # pytesseract.pytesseract.tesseract_cmd = 'D:/TesseractOCR/Tesseract-OCR/tesseract.exe'
 # tessdata_dir_config = '--tessdata-dir "D:/TesseractOCR/Tesseract-OCR/tessdata"'
@@ -22,18 +22,19 @@ if __name__ == '__main__':
     parser.add_argument('-save_tmp', type=int, default=1)
     args = parser.parse_args()
     print(args)
-    if not os.path.exists(args.output_dir):
-        os.makedirs(args.output_dir)
+    video_name = args.video.split('/')[-1][:-4]
+    output_dir = args.output_dir + "/" + video_name
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
 
-    # 读取视频截取图片
-    select_pictures(args.video, args.output_dir)
-    # 结果存到 args.output_dir + "/pictures/"
-    #####################
-
-    res_list = []
-    img_path = args.output_dir + "/pictures/"
+    img_path = output_dir + "/pictures/"
     if not os.path.exists(img_path):
         os.makedirs(img_path)
+    # 读取视频截取图片
+    select_pictures(args.video, output_dir)
+    print("Pictures Selected Successfully.")
+    # exit(0)
+    res_list = []
     img_dirs = os.listdir(img_path)
     for file in img_dirs:
         print("===== processing: ", file," =====")
@@ -89,7 +90,7 @@ if __name__ == '__main__':
                 cv2.rectangle(raw_image, p1, p2, color, 2)
         if args.save_tmp:
             # 将中间过程保存
-            save_dir = args.output_dir + '/tmp_result/'
+            save_dir = output_dir + '/detect/'
             if not os.path.exists(save_dir):
                 os.makedirs(save_dir)
             cv2.imwrite(save_dir + file, raw_image)
@@ -117,6 +118,6 @@ if __name__ == '__main__':
         res_list.append(tmp_dict)
         # break
 
-    wt_xls(res_list,args.output_dir + '/sheet.xls')  # 存取识别结果到表格
+    wt_xls(res_list,output_dir + '/sheet.xls')  # 存取识别结果到表格
 
     # 此处完成了OCR识别，接下来完成后续的可视化
