@@ -798,12 +798,8 @@ def select_pictures(path_video, path_frames):
         os.makedirs(file_2_path)
     for i in range(0, count - 6):
         img = Image.open(img_path[i])
-<<<<<<< HEAD
         img.save(os.path.join(file_2_path, img_path[i].split('/')[-1]))
-=======
-        img.save(os.path.join('file_2', img_path[i][(len(img_path[i])-8):]))
         print('save %d' % i)
->>>>>>> ecf99cfe3f2efb2affa403c7394f91f2d3c8ba9d
 
     #根据每一帧的时间信息进行第二步筛选，选出作为数据集的帧
     img_path_1 = get_imlist(file_2_path)
