@@ -17,7 +17,7 @@ import img_preprocess as ip
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('-video', type=str, default='./videos/browsers.mp4')
+    parser.add_argument('-video', type=str, default='./videos/Mobile Phone Brands.mp4')
     parser.add_argument('-output_dir', type=str, default='./result')
     parser.add_argument('-save_tmp', type=int, default=1)
     args = parser.parse_args()
@@ -33,7 +33,7 @@ if __name__ == '__main__':
     # 读取视频截取图片
     select_pictures(args.video, output_dir)
     print("Pictures Selected Successfully.")
-    # exit(0)
+    exit(0)
     res_list = []
     img_dirs = os.listdir(img_path)
     for file in img_dirs:
@@ -43,13 +43,20 @@ if __name__ == '__main__':
         # raw_image = cv2.imread(img_path + "2011_Q3.jpg")
         new_img = raw_image.copy()
         # 颜色过滤
+
+
         for m in range(new_img.shape[0]):
             for n in range(new_img.shape[1]):
                 tmp_px = new_img[m, n, :]
-                if ((tmp_px[0] < 60) and (tmp_px[1] < 60) and (tmp_px[2] < 60)):
+                if ((tmp_px[0] < 60) and
+                    (tmp_px[1] < 60) and
+                    (tmp_px[2] < 60)):
                     pass
                 else:
                     new_img[m, n, :] = [255, 255, 255]
+
+
+
         # 高斯滤波
         blurred = cv2.GaussianBlur(new_img, (3, 3), 0)
         gray = cv2.cvtColor(blurred, cv2.COLOR_BGR2GRAY)

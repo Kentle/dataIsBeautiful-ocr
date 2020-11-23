@@ -150,7 +150,7 @@ if __name__ == '__main__':
     # 停用词
     stopwords = [" Popular", " Internet", " Browsers", "e"]
     res_list = []
-    path = "./pic/"
+    path = "./result/pictures/"
     dirs = os.listdir(path)
     for file in dirs:
         print(file[:-4])
@@ -177,9 +177,9 @@ if __name__ == '__main__':
         rlist = rlist[6:]
         tmp_dict = {"name": file[:-4]}
         for i in range(len(nlist)):
-            tmp_dict[nlist[i]] = float(rlist[i].strip('%')) / 100.
+            tmp_dict[nlist[i]] = round(float(rlist[i].strip('%')) / 100.,4)
         res_list.append(tmp_dict)
-        # print(tmp_dict)
+        print(tmp_dict)
         time.sleep(2)
 
     # print(res_list)

@@ -17,6 +17,9 @@ for m in range(image.shape[0]):
         else:
             image[m, n, :] = [255,255,255]
 
+        if n >= 800 and n <= 1250 and m >= 550 and m <= 700:
+            image[m, n, :] = [255, 255, 255]
+
 img = cv2.cvtColor(image,cv2.COLOR_RGB2BGR)
 # cv2.imshow("color_filter",img)
 cv2.imwrite("./tmp_result/color_filter.jpg",img)
