@@ -757,14 +757,11 @@ def select_pictures(path_video, path_frames):
     while success:
         success, image = vidcap.read()
         print(count)
-        if success:
-            cv2.imwrite(file_1_path+ "%s.jpg" % str(count).zfill(4), image)
-        else:
-            break
+        #由于read()函数会将最后一帧置为None，故设置一个类型检验过程，当image类型为矩阵时方可保存图片。
+        if type(image) != type(None):
+            cv2.imwrite("file_1\%s.jpg" % str(count).zfill(4), image)
         # 若没有按下esc键，则每1ms切换下一帧,其中27为esc键的ASCII码，判断是否按下esc键
         if cv2.waitKey(1) == 27:
-            break
-        elif count >= 4916:
             break
         print("save %d frames" % count)
         count += 1
