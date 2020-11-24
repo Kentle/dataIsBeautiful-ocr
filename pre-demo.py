@@ -7,12 +7,16 @@ import img_preprocess as ip
 pytesseract.pytesseract.tesseract_cmd = 'D:/TesseractOCR/Tesseract-OCR/tesseract.exe'
 tessdata_dir_config = '--tessdata-dir "D:/TesseractOCR/Tesseract-OCR/tessdata"'
 
-raw_image = Image.open("./pictures/2010_Q1.jpg")
+raw_image = Image.open("./result/Programming Languages/pictures/1993_Q1.jpg")
 image = np.array(raw_image)
 for m in range(image.shape[0]):
     for n in range(image.shape[1]):
         tmp_px = image[m,n,:]
-        if ((tmp_px[0] < 60) and (tmp_px[1] < 60) and (tmp_px[2] < 60)):
+        if (tmp_px[0] < 50) \
+                and (tmp_px[1] < 50) \
+                and (tmp_px[2] < 50) \
+                and (abs(int(tmp_px[0]) - int(tmp_px[1])) < 10)\
+                and (abs(int(tmp_px[2]) - int(tmp_px[1])) < 10):
             pass
         else:
             image[m, n, :] = [255,255,255]
@@ -44,6 +48,7 @@ H = 'horizontal'
 V = 'vertical'
 root = ip.cut_binary_img1(erode_img, 0, 0, direction=H, iteration=2)
 rects = ip.get_leaf_node(root)
+
 new_img = ip.draw_rects(img, rects)
 # get_projection_list_demo(binary_img)
 

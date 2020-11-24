@@ -144,7 +144,7 @@ def cut_binary_img1(binary_img, startX, startY, direction='horizontal', iteratio
 
     projection_list = get_projection_list(binary_img, direction)
     minValue = int(0.1 * sum(projection_list) / len(projection_list))
-    # minValue = 2
+    # minValue = 6
     split_list = split_projection_list(projection_list, minValue)
     for start, end in split_list:
         if end - start < 5:
